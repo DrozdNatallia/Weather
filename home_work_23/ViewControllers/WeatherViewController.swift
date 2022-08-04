@@ -68,12 +68,32 @@ class WeatherViewController: UIViewController {
             }
         }
     }
+    var objectNotificationToken: NotificationToken?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let realm = try! Realm()
         try! realm.write {
             realm.deleteAll()
         }
+        provaider = RealmProvader()
+        provaider.setConditionalWeather(rain: defaults.bool(forKey: "rain"), snow: defaults.bool(forKey: "snow"), thunderStorm: defaults.bool(forKey: "thunderstorm"))
+        provaider.setSettingsList(system: defaults.bool(forKey: "isMetric"), format: defaults.bool(forKey: "dateFormat"))
+        guard let settings = provaider.getResult(nameObject: RealmSettings.self).last else {
+            return
+        }
+        objectNotificationToken = settings.observe { change in
+            switch change {
+            case .change:
+                self.getCoordinatesByName()
+                self.tableView.reloadData()
+            case .error(let error):
+                print("An error occurred: \(error)")
+            case .deleted:
+                print("The object was deleted.")
+            }
+        }
+        
         coreManager.delegate = self
         view.backgroundColor = UIColor(patternImage: UIImage(named: "e6d438f7bc89107d163f0db9f1e1f601.jpeg")!)
         
@@ -97,7 +117,7 @@ class WeatherViewController: UIViewController {
         refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Refreshing", comment: ""), attributes: [.foregroundColor: UIColor.white])
         refreshControl.tintColor = .white
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-
+        
         notificationCenter.removeAllPendingNotificationRequests()
         provaider = RealmProvader()
         apiProvider = AlamofireProvaider()
@@ -112,7 +132,6 @@ class WeatherViewController: UIViewController {
             nameCity = defaults.string(forKey: "city")
             getCoordinatesByName()
         }
-        
     }
     
     // MARK: Refresh tableView
@@ -122,7 +141,6 @@ class WeatherViewController: UIViewController {
         }
         refreshControl.endRefreshing()
     }
-    
     
     func getWeatherByLocation() {
         guard currentCoordinate != nil else {return}
@@ -147,7 +165,6 @@ class WeatherViewController: UIViewController {
         UserDefaults.standard.set(true, forKey: "isNone")
         selectionMode = .selectionCity
         let alert = UIAlertController(title: NSLocalizedString("Enter the name of the city", comment: ""), message: nil, preferredStyle: .alert)
-        
         alert.addTextField { textField in
             textField.delegate = self
             textField.placeholder = NSLocalizedString("Enter name", comment: "")
@@ -253,16 +270,21 @@ class WeatherViewController: UIViewController {
                     self.hourlyArrayDt.append(hourlyDt.convertUnix(formattedType: self.defaults.bool(forKey: "dateFormat") ? .hourFirstType : .hourSecondType))
                     self.hourlyArrayTemp.append(hourlyTemp)
                     
-                    if self.defaults.bool(forKey: "thunderstorm") && thunderstorm.contains(weatherId) {
-                            self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
-                    }
-        
-                    if self.defaults.bool(forKey: "rain") && rain.contains(weatherId) {
-                            self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    
+                    guard let conditional = self.provaider.getResult(nameObject: WeatherConditional.self).last else {
+                        return
                     }
                     
-                    if self.defaults.bool(forKey: "snow") && snow.contains(weatherId) {
-                            self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    if conditional.thunderStorm && thunderstorm.contains(weatherId) {
+                        self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    }
+                    
+                    if conditional.rain && rain.contains(weatherId) {
+                        self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    }
+                    
+                    if conditional.snow && snow.contains(weatherId) {
+                        self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
                     }
                 }
                 self.setWeatherNotifications(arrayTime: self.hourlyArrayBadWeatherDt)

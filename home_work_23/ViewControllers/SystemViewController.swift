@@ -11,6 +11,7 @@ class SystemViewController: UIViewController {
     var systemSettings: [String]!
     @IBOutlet weak var tableView: UITableView!
     var defaults = UserDefaults()
+    var provaider = RealmProvader()
     enum SystemType: Int {
         case metrical = 0
         case imperial

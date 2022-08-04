@@ -39,6 +39,7 @@ extension DateViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         UserDefaults.standard.set(!defaults.bool(forKey: "dateFormat"), forKey: "dateFormat")
+        provaider.updateFormat(format: defaults.bool(forKey: "dateFormat"))
         tableView.reloadData()
     }
     

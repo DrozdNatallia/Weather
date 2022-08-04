@@ -1,0 +1,15 @@
+
+/* Class = "UITabBarItem"; title = "Weather on Map"; ObjectID = "01w-p3-gFj"; */
+"01w-p3-gFj.title" = "Weather on Map";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "W0X-l5-xmi"; */
+"W0X-l5-xmi.normalTitle" = "Button";
+
+/* Class = "UITabBarItem"; title = "Current Weather"; ObjectID = "bbe-Ma-CM8"; */
+"bbe-Ma-CM8.title" = "Current Weather";
+
+/* Class = "UITabBarItem"; title = "List all request"; ObjectID = "gF4-MS-kM9"; */
+"gF4-MS-kM9.title" = "List all request";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "m4I-0A-6pO"; */
+"m4I-0A-6pO.normalTitle" = "Button";

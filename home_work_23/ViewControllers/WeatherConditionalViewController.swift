@@ -9,6 +9,7 @@ import UIKit
 
 class WeatherConditionalViewController: UIViewController {
     var weatherConditional: [String]!
+    var provaider = RealmProvader()
     @IBOutlet weak var tableView: UITableView!
     enum conditionalType: Int {
         case thuderstorm = 0

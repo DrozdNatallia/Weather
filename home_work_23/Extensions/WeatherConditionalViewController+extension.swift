@@ -39,6 +39,7 @@ extension WeatherConditionalViewController: UITableViewDelegate, UITableViewData
         default:
             UserDefaults.standard.set(!defaults.bool(forKey: "snow"), forKey: "snow")
         }
+        provaider.updateConditionalWeather(rain: defaults.bool(forKey: "rain"), snow: defaults.bool(forKey: "snow"), thunderStorm: defaults.bool(forKey: "thunderstorm"))
         tableView.reloadData()
         notificationCenter.removeAllPendingNotificationRequests()
     }

@@ -10,6 +10,7 @@ import UIKit
 class DateViewController: UIViewController {
     var dateFormatSettings: [String]!
     @IBOutlet weak var tableView: UITableView!
+    var provaider = RealmProvader()
     enum DateTypeFormat: Int {
         case firstType = 0
         case secondType
