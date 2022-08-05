@@ -33,11 +33,11 @@ class AlamofireProvaider: RestAPIProviderProtocol {
         if let preferredLanguage = Locale.preferredLanguages.first, preferredLanguage == "ru" {
             lang = preferredLanguage
         }
-        let defaults = UserDefaults()
-        var system = "imperial"
-        if defaults.bool(forKey: "isMetric") {
-            system = "metric"
-        }
+        let provaider = RealmProvader()
+        let listSetting = provaider.getResult(nameObject: RealmSettings.self).last
+        let typeSystem = listSetting?.typeSystem ?? false
+        let system = typeSystem ? "metric" : "imperial"
+        
         let params = addParams(queryItems: ["lat": lat.description, "lon": lon.description, "exlcude":"minutely,alerts", "units" : system, "lang" : lang])
 
         

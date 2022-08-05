@@ -72,13 +72,19 @@ class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let realm = try! Realm()
-        try! realm.write {
-            realm.deleteAll()
-        }
         provaider = RealmProvader()
-        provaider.setConditionalWeather(rain: defaults.bool(forKey: "rain"), snow: defaults.bool(forKey: "snow"), thunderStorm: defaults.bool(forKey: "thunderstorm"))
-        provaider.setSettingsList(system: defaults.bool(forKey: "isMetric"), format: defaults.bool(forKey: "dateFormat"))
+        let listSetting = provaider.getResult(nameObject: RealmSettings.self).last
+        let system = listSetting?.typeSystem ?? false
+        let dateFormat = listSetting?.formatDate ?? false
+        
+        let conditional = provaider.getResult(nameObject: WeatherConditional.self).last
+        let snow = conditional?.snow ?? false
+        let rain = conditional?.rain ?? false
+        let thunderStorm = conditional?.thunderStorm ?? false
+
+        provaider.setConditionalWeather(rain: rain, snow: snow, thunderStorm: thunderStorm)
+        provaider.setSettingsList(system: system, format: dateFormat)
+        
         guard let settings = provaider.getResult(nameObject: RealmSettings.self).last else {
             return
         }
@@ -267,10 +273,13 @@ class WeatherViewController: UIViewController {
                             print("error")
                         }
                     }
-                    self.hourlyArrayDt.append(hourlyDt.convertUnix(formattedType: self.defaults.bool(forKey: "dateFormat") ? .hourFirstType : .hourSecondType))
+                    
+                    let listSetting = self.provaider.getResult(nameObject: RealmSettings.self).last
+                    let dateFormat = listSetting?.formatDate ?? false
+
+                    self.hourlyArrayDt.append(hourlyDt.convertUnix(formattedType: dateFormat ? .hourFirstType : .hourSecondType))
                     self.hourlyArrayTemp.append(hourlyTemp)
-                    
-                    
+                                        
                     guard let conditional = self.provaider.getResult(nameObject: WeatherConditional.self).last else {
                         return
                     }

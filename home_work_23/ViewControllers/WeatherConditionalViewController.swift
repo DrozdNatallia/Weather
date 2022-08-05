@@ -16,7 +16,6 @@ class WeatherConditionalViewController: UIViewController {
         case rain
         case snow
     }
-    var defaults = UserDefaults()
     let notificationCenter = UNUserNotificationCenter.current()
     override func viewDidLoad() {
         super.viewDidLoad()

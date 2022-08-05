@@ -16,13 +16,18 @@ extension WeatherConditionalViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: WeatherConditionalCell.key) as? WeatherConditionalCell {
             cell.nameWeatherConditional.text = NSLocalizedString(weatherConditional[indexPath.row], comment: "")
+            let conditional = provaider.getResult(nameObject: WeatherConditional.self).last
+            let snow = conditional?.snow ?? false
+            let rain = conditional?.rain ?? false
+            let thunderStorm = conditional?.thunderStorm ?? false
+            
             switch conditionalType(rawValue: indexPath.row) {
             case .thuderstorm:
-                cell.icon.image = UIImage(systemName: defaults.bool(forKey: "thunderstorm") ? "square.fill" : "square")
+                cell.icon.image = UIImage(systemName: thunderStorm ? "square.fill" : "square")
             case .rain:
-                cell.icon.image = UIImage(systemName: defaults.bool(forKey: "rain") ? "square.fill" : "square")
+                cell.icon.image = UIImage(systemName: rain ? "square.fill" : "square")
             default:
-                cell.icon.image = UIImage(systemName: defaults.bool(forKey: "snow") ? "square.fill" : "square")
+                cell.icon.image = UIImage(systemName: snow ? "square.fill" : "square")
             }
             return cell
         }
@@ -30,16 +35,19 @@ extension WeatherConditionalViewController: UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let conditional = provaider.getResult(nameObject: WeatherConditional.self).last
+        let snow = conditional?.snow ?? false
+        let rain = conditional?.rain ?? false
+        let thunderStorm = conditional?.thunderStorm ?? false
         
         switch conditionalType(rawValue: indexPath.row){
         case .thuderstorm:
-            UserDefaults.standard.set(!defaults.bool(forKey: "thunderstorm"), forKey: "thunderstorm")
+            provaider.updateConditionalWeather(rain: rain, snow: snow, thunderStorm: !thunderStorm)
         case.rain:
-            UserDefaults.standard.set(!defaults.bool(forKey: "rain"), forKey: "rain")
+            provaider.updateConditionalWeather(rain: !rain, snow: snow, thunderStorm: thunderStorm)
         default:
-            UserDefaults.standard.set(!defaults.bool(forKey: "snow"), forKey: "snow")
+            provaider.updateConditionalWeather(rain: rain, snow: !snow, thunderStorm: thunderStorm)
         }
-        provaider.updateConditionalWeather(rain: defaults.bool(forKey: "rain"), snow: defaults.bool(forKey: "snow"), thunderStorm: defaults.bool(forKey: "thunderstorm"))
         tableView.reloadData()
         notificationCenter.removeAllPendingNotificationRequests()
     }

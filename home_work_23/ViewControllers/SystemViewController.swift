@@ -10,7 +10,6 @@ import UIKit
 class SystemViewController: UIViewController {
     var systemSettings: [String]!
     @IBOutlet weak var tableView: UITableView!
-    var defaults = UserDefaults()
     var provaider = RealmProvader()
     enum SystemType: Int {
         case metrical = 0
@@ -22,5 +21,11 @@ class SystemViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "SystemCell", bundle: nil), forCellReuseIdentifier: SystemCell.key)
+    }
+    
+    func checkingTypeSystem() -> Bool {
+        let listSetting = provaider.getResult(nameObject: RealmSettings.self).last
+        let type = listSetting?.typeSystem
+        return type ?? false
     }
 }

@@ -17,7 +17,7 @@ extension SystemViewController: UITableViewDelegate, UITableViewDataSource {
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: SystemCell.key) as? SystemCell {
             cell.nameSystem.text = NSLocalizedString(systemSettings[indexPath.row], comment: "")
-            if defaults.bool(forKey: "isMetric") {
+            if checkingTypeSystem() {
                 switch SystemType(rawValue: indexPath.row) {
                 case .metrical:
                     cell.icon.image = UIImage(systemName: "square.fill")
@@ -38,8 +38,7 @@ extension SystemViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UserDefaults.standard.set(!defaults.bool(forKey: "isMetric"), forKey: "isMetric")
-        provaider.updateSystem(system: defaults.bool(forKey: "isMetric"))
+        provaider.updateSystem(system: !checkingTypeSystem())
         tableView.reloadData()
     }
 }

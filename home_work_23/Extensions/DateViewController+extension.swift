@@ -17,7 +17,7 @@ extension DateViewController: UITableViewDelegate, UITableViewDataSource {
 
         if let cell = tableView.dequeueReusableCell(withIdentifier: DateViewCell.key) as? DateViewCell {
             cell.nameDateFormat.text = NSLocalizedString(dateFormatSettings[indexPath.row], comment: "")
-            if defaults.bool(forKey: "dateFormat") {
+            if checkingDate() {
             switch DateTypeFormat(rawValue: indexPath.row) {
             case .firstType:
                 cell.icon.image = UIImage(systemName: "square.fill")
@@ -38,8 +38,7 @@ extension DateViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UserDefaults.standard.set(!defaults.bool(forKey: "dateFormat"), forKey: "dateFormat")
-        provaider.updateFormat(format: defaults.bool(forKey: "dateFormat"))
+        provaider.updateFormat(format: !checkingDate())
         tableView.reloadData()
     }
     

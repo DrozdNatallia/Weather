@@ -25,4 +25,9 @@ class DateViewController: UIViewController {
         
         tableView.register(UINib(nibName: "DateViewCell", bundle: nil), forCellReuseIdentifier: DateViewCell.key)
     }
+    func checkingDate() -> Bool {
+        let listSetting = provaider.getResult(nameObject: RealmSettings.self).last
+        let dateFormat = listSetting?.formatDate
+        return dateFormat ?? false
+    }
 }
