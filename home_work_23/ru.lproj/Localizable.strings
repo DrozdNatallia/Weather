@@ -27,4 +27,17 @@
 "Refreshing" = "Обновление";
 "true" = "да";
 "false" = "нет";
-//"en" = "ru"
+
+"thunderstorm" = "гроза";
+"rain" = "дождь";
+"snow" = "снег";
+
+"Choice weather conditional" = "Выбор погодных условий";
+"History request" = "История запросов";
+
+"24-hour format" = "24 часовой формат";
+"12-hour format" = "12 часовой формат";
+"System measurement" = "Система измерения";
+"Date format" = "Формат даты";
+"metrical system" = "метрическая система";
+"imperial system" = "имперская система";

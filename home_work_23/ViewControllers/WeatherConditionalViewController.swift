@@ -8,36 +8,20 @@
 import UIKit
 
 class WeatherConditionalViewController: UIViewController {
-
+    var weatherConditional: [String]!
+    var provaider = RealmProvader()
     @IBOutlet weak var tableView: UITableView!
+    enum conditionalType: Int {
+        case thuderstorm = 0
+        case rain
+        case snow
+    }
+    let notificationCenter = UNUserNotificationCenter.current()
     override func viewDidLoad() {
         super.viewDidLoad()
+        weatherConditional = ["thunderstorm", "rain", "snow"]
         tableView.delegate = self
         tableView.dataSource = self
-        // Do any additional setup after loading the view.
+        tableView.register(UINib(nibName: "WeatherConditionalCell", bundle: nil), forCellReuseIdentifier: WeatherConditionalCell.key)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-}
-
-extension WeatherConditionalViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
-    }
-    
-    
 }

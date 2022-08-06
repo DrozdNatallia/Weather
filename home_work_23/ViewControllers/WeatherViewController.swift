@@ -68,12 +68,38 @@ class WeatherViewController: UIViewController {
             }
         }
     }
+    var objectNotificationToken: NotificationToken?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let realm = try! Realm()
-        try! realm.write {
-            realm.deleteAll()
+        provaider = RealmProvader()
+        let listSetting = provaider.getResult(nameObject: RealmSettings.self).last
+        let system = listSetting?.typeSystem ?? false
+        let dateFormat = listSetting?.formatDate ?? false
+        
+        let conditional = provaider.getResult(nameObject: WeatherConditional.self).last
+        let snow = conditional?.snow ?? false
+        let rain = conditional?.rain ?? false
+        let thunderStorm = conditional?.thunderStorm ?? false
+
+        provaider.setConditionalWeather(rain: rain, snow: snow, thunderStorm: thunderStorm)
+        provaider.setSettingsList(system: system, format: dateFormat)
+        
+        guard let settings = provaider.getResult(nameObject: RealmSettings.self).last else {
+            return
         }
+        objectNotificationToken = settings.observe { change in
+            switch change {
+            case .change:
+                self.getCoordinatesByName()
+                self.tableView.reloadData()
+            case .error(let error):
+                print("An error occurred: \(error)")
+            case .deleted:
+                print("The object was deleted.")
+            }
+        }
+        
         coreManager.delegate = self
         view.backgroundColor = UIColor(patternImage: UIImage(named: "e6d438f7bc89107d163f0db9f1e1f601.jpeg")!)
         
@@ -99,7 +125,6 @@ class WeatherViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         
         notificationCenter.removeAllPendingNotificationRequests()
-        
         provaider = RealmProvader()
         apiProvider = AlamofireProvaider()
         
@@ -113,7 +138,6 @@ class WeatherViewController: UIViewController {
             nameCity = defaults.string(forKey: "city")
             getCoordinatesByName()
         }
-        
     }
     
     // MARK: Refresh tableView
@@ -123,7 +147,6 @@ class WeatherViewController: UIViewController {
         }
         refreshControl.endRefreshing()
     }
-    
     
     func getWeatherByLocation() {
         guard currentCoordinate != nil else {return}
@@ -148,7 +171,6 @@ class WeatherViewController: UIViewController {
         UserDefaults.standard.set(true, forKey: "isNone")
         selectionMode = .selectionCity
         let alert = UIAlertController(title: NSLocalizedString("Enter the name of the city", comment: ""), message: nil, preferredStyle: .alert)
-        
         alert.addTextField { textField in
             textField.delegate = self
             textField.placeholder = NSLocalizedString("Enter name", comment: "")
@@ -205,7 +227,7 @@ class WeatherViewController: UIViewController {
         let content = UNMutableNotificationContent()
         content.body = NSLocalizedString("Weather conditions will worsen soon", comment: "")
         var date = DateComponents()
-        date.hour = Int(time.convertUnix(formattedType: .hour))
+        date.hour = Int(time.convertUnix(formattedType: .hourSecondType))
         date.minute = Int(time.convertUnix(formattedType: .minutly))
         let calendarTrigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
         let indentifier = String(time)
@@ -251,12 +273,26 @@ class WeatherViewController: UIViewController {
                             print("error")
                         }
                     }
-                    self.hourlyArrayDt.append(hourlyDt.convertUnix(formattedType: .hour))
-                    self.hourlyArrayTemp.append(hourlyTemp)
-                    self.hourlyArrayBadWeatherId.append(weatherId)
                     
-                    if snow.contains(weatherId) || rain.contains(weatherId) || thunderstorm.contains(weatherId) {
-                        self.hourlyArrayBadWeatherDt.removeAll()
+                    let listSetting = self.provaider.getResult(nameObject: RealmSettings.self).last
+                    let dateFormat = listSetting?.formatDate ?? false
+
+                    self.hourlyArrayDt.append(hourlyDt.convertUnix(formattedType: dateFormat ? .hourFirstType : .hourSecondType))
+                    self.hourlyArrayTemp.append(hourlyTemp)
+                                        
+                    guard let conditional = self.provaider.getResult(nameObject: WeatherConditional.self).last else {
+                        return
+                    }
+                    
+                    if conditional.thunderStorm && thunderstorm.contains(weatherId) {
+                        self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    }
+                    
+                    if conditional.rain && rain.contains(weatherId) {
+                        self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
+                    }
+                    
+                    if conditional.snow && snow.contains(weatherId) {
                         self.hourlyArrayBadWeatherDt.append(hourlyDt - 60 * 30)
                     }
                 }

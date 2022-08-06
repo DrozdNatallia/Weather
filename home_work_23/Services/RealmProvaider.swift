@@ -38,4 +38,51 @@ class RealmProvader: RealmProviderProtocol {
         newRequest.isCurrentWeather = isCurrentWeather
         writeObjectToDatabase(name: newRequest)
     }
+    
+    func setSettingsList(system: Bool, format: Bool) {
+        let systemSetting = RealmSettings()
+        systemSetting.formatDate = format
+        systemSetting.typeSystem = system
+        systemSetting.weatherConditional = getResult(nameObject: WeatherConditional.self).last
+        writeObjectToDatabase(name: systemSetting)
+        
+    }
+    
+    func setConditionalWeather(rain: Bool, snow: Bool, thunderStorm: Bool) {
+        let newRequest = WeatherConditional()
+        newRequest.rain = rain
+        newRequest.thunderStorm = thunderStorm
+        newRequest.snow = snow
+        writeObjectToDatabase(name: newRequest)
+    }
+    
+    func updateSystem(system: Bool) {
+        try! realm.write {
+            guard let settings = getResult(nameObject: RealmSettings.self).last else {
+                return
+            }
+            settings.typeSystem = system
+        }
+    }
+    
+    
+    func updateFormat(format: Bool) {
+        try! realm.write {
+            guard let settings = getResult(nameObject: RealmSettings.self).last else {
+                return
+            }
+            settings.formatDate = format
+        }
+    }
+    
+    func updateConditionalWeather(rain: Bool, snow: Bool, thunderStorm: Bool) {
+        try! realm.write {
+            guard let setttings = getResult(nameObject: RealmSettings.self).last, let weathersConditional = setttings.weatherConditional else {
+                return
+            }
+            weathersConditional.rain = rain
+            weathersConditional.snow = snow
+            weathersConditional.thunderStorm = thunderStorm
+        }
+    }
 }

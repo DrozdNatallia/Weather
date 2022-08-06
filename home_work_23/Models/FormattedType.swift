@@ -9,7 +9,8 @@ import Foundation
 
 enum FormattedType {
     case day
-    case hour
+    case hourFirstType
+    case hourSecondType
     case fullTime
     case minutly
     
@@ -17,8 +18,10 @@ enum FormattedType {
         switch self {
          case .day:
              return "EEE"
-         case .hour:
-             return "hh"
+         case .hourFirstType:
+             return "HH"
+        case .hourSecondType:
+            return "hh"
          case .fullTime:
              return "dd-MM-yy HH:mm:ss"
         case .minutly:

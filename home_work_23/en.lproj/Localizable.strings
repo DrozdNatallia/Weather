@@ -26,3 +26,17 @@
 "Refreshing" = "Refreshing";
 "true" = "true";
 "false" = "false";
+
+"thunderstorm" = "thunderstorm";
+"rain" = "rain";
+"snow" = "snow";
+
+"Choice weather conditional" = "Choice weather conditional";
+"History request" = "History request";
+
+"24-hour format" = "24-hour format";
+"12-hour format" = "12-hour format";
+"System measurement" = "System measurement";
+"Date format" = "Date format";
+"metrical system" = "metrical system";
+"imperial system" = "imperial system";

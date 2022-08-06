@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        let config = Realm.Configuration(schemaVersion: 2)
+        let config = Realm.Configuration(schemaVersion: 3)
         Realm.Configuration.defaultConfiguration = config
         let _ = try! Realm()
         

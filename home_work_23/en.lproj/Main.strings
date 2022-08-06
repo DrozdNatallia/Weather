@@ -8,6 +8,9 @@
 /* Class = "UITabBarItem"; title = "Current Weather"; ObjectID = "bbe-Ma-CM8"; */
 "bbe-Ma-CM8.title" = "Current Weather";
 
+/* Class = "UITabBarItem"; title = "Settings"; ObjectID = "dh4-hx-kZA"; */
+"dh4-hx-kZA.title" = "Settings";
+
 /* Class = "UITabBarItem"; title = "List all request"; ObjectID = "gF4-MS-kM9"; */
 "gF4-MS-kM9.title" = "List all request";
 
